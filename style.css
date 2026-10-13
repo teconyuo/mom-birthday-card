@@ -1,0 +1,451 @@
+/* =========================================================
+   妈妈生日贺卡 · 样式表
+   暖色调 + 柔和风格，手机优先（先写手机，再写大屏）
+   想换配色：只改下面 :root 里的颜色就好
+   ========================================================= */
+
+:root {
+  --cream: #FFF6EC;   /* 背景奶油色 */
+  --peach: #FFE6CB;   /* 蜜桃色 */
+  --blush: #F6C6B2;   /* 淡胭脂色 */
+  --clay: #C8674A;    /* 主色：陶土红 */
+  --clay-dark: #A85337;
+  --gold: #E0A75E;    /* 点缀金 */
+  --ink: #6B4A3D;     /* 正文暖棕 */
+  --ink-soft: #8C6B5C;/* 次要文字 */
+  --card: #FFFDFA;    /* 卡片底色 */
+  --shadow: 0 10px 30px rgba(160, 110, 80, .14);
+
+  --radius: 18px;
+  /* 标题用衬线字体，更有贺卡的温柔感；不同系统各取所长 */
+  --font-serif: "Songti SC", "STSong", "KaiTi", "楷体", "SimSun", "宋体", "Noto Serif SC", Georgia, serif;
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background-color: var(--cream);
+  /* 两团柔和的光晕，让背景不那么平 */
+  background-image:
+    radial-gradient(60vw 60vw at 12% 8%, rgba(255, 214, 170, .75), transparent 70%),
+    radial-gradient(70vw 70vw at 88% 30%, rgba(246, 198, 178, .55), transparent 72%),
+    linear-gradient(180deg, #FFF8F0 0%, #FFF3E6 45%, #FFEFE6 100%);
+  background-attachment: fixed;
+  line-height: 1.85;
+  overflow-x: hidden;          /* 防止手机上左右晃动 */
+  -webkit-text-size-adjust: 100%;
+}
+
+img { max-width: 100%; display: block; }
+
+.section {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 56px 20px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 6vw, 2.1rem);
+  text-align: center;
+  color: var(--clay);
+  letter-spacing: .06em;
+  margin: 0 0 28px;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 52px;
+  height: 2px;
+  margin: 14px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ---------- 渐显文字动画 ---------- */
+/* 元素一进入屏幕就柔和地淡入上移；--d 用来做错开的延迟 */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .9s ease var(--d, 0ms), transform .9s ease var(--d, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* =========================================================
+   ① 封面
+   ========================================================= */
+.hero {
+  position: relative;
+  min-height: 100vh;       /* 老浏览器兜底 */
+  min-height: 100svh;      /* 手机浏览器地址栏收起时也不会被裁掉 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 22px calc(40px + env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  animation: heroIn 1.2s ease both;
+}
+
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.hero-kicker {
+  margin: 0 0 10px;
+  font-size: .95rem;
+  letter-spacing: .3em;
+  color: var(--ink-soft);
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 13vw, 4.4rem);
+  line-height: 1.25;
+  margin: 0;
+  color: var(--clay);
+  letter-spacing: .04em;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, .8);
+}
+
+.hero-title span {
+  display: inline-block;
+  color: var(--clay-dark);
+}
+
+.hero-sub {
+  margin: 20px 0 34px;
+  font-size: clamp(.95rem, 4vw, 1.1rem);
+  color: var(--ink-soft);
+}
+
+/* 主按钮：手机上好点按（高度 48px 以上） */
+.btn-main {
+  display: inline-block;
+  min-height: 48px;
+  padding: 14px 34px;
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 1rem;
+  letter-spacing: .08em;
+  color: #fff;
+  background: linear-gradient(135deg, #D97A58, var(--clay));
+  box-shadow: 0 10px 22px rgba(200, 103, 74, .32);
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.btn-main:active { transform: scale(.97); }
+.btn-main:hover { box-shadow: 0 12px 26px rgba(200, 103, 74, .4); }
+
+.btn-soft {
+  background: linear-gradient(135deg, #E8A87C, #D98B6A);
+  box-shadow: 0 10px 22px rgba(200, 130, 90, .3);
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  margin: 0;
+  color: var(--blush);
+  font-size: 1.4rem;
+  animation: floatY 2.4s ease-in-out infinite;
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); opacity: .5; }
+  50%      { transform: translateY(8px); opacity: 1; }
+}
+
+/* 缓缓飘落的小花瓣 */
+.petals { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.petals span {
+  position: absolute;
+  top: -6%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50% 0 50% 50%;
+  background: var(--blush);
+  opacity: .5;
+  animation: fall 14s linear infinite;
+}
+.petals span:nth-child(1) { left: 8%;  animation-delay: 0s;   }
+.petals span:nth-child(2) { left: 26%; animation-delay: 3s;   animation-duration: 17s; }
+.petals span:nth-child(3) { left: 44%; animation-delay: 6s;   animation-duration: 15s; }
+.petals span:nth-child(4) { left: 62%; animation-delay: 2s;   animation-duration: 19s; }
+.petals span:nth-child(5) { left: 78%; animation-delay: 8s;   animation-duration: 16s; }
+.petals span:nth-child(6) { left: 92%; animation-delay: 5s;   animation-duration: 18s; }
+
+@keyframes fall {
+  0%   { transform: translateY(0) rotate(0deg);      opacity: 0; }
+  10%  { opacity: .5; }
+  100% { transform: translateY(108vh) rotate(320deg); opacity: 0; }
+}
+
+/* =========================================================
+   ② 蛋糕与许愿
+   ========================================================= */
+.cake-wrap {
+  position: relative;      /* 火花图层的定位基准 */
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 26px;
+}
+
+.cake {
+  position: relative;
+  width: 180px;
+  height: 170px;
+}
+
+/* 蜡烛 */
+.candle {
+  position: absolute;
+  left: 50%;
+  bottom: 78px;
+  width: 10px;
+  height: 46px;
+  margin-left: -5px;
+  border-radius: 5px;
+  background: repeating-linear-gradient(180deg, #FFF3E4 0 8px, #F3B7A3 8px 16px);
+}
+
+/* 烛火 */
+.flame {
+  position: absolute;
+  left: 50%;
+  top: -22px;
+  width: 14px;
+  height: 20px;
+  margin-left: -7px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(circle at 50% 62%, #FFF6C9 0%, #FFC46B 55%, #F1913C 100%);
+  box-shadow: 0 0 26px 8px rgba(255, 190, 110, .55);
+  transform-origin: 50% 100%;
+  animation: flicker 1.6s ease-in-out infinite;
+  transition: opacity .5s ease, transform .5s ease;
+}
+
+@keyframes flicker {
+  0%, 100% { transform: scaleY(1) translateX(0); }
+  50%      { transform: scaleY(1.08) translateX(1px); }
+}
+
+/* 吹灭蜡烛后 */
+.cake.is-out .flame { opacity: 0; transform: scaleY(.2); }
+
+/* 蛋糕两层 */
+.layer {
+  position: absolute;
+  left: 50%;
+  border-radius: 10px 10px 8px 8px;
+}
+
+.layer-top {
+  bottom: 74px;
+  width: 108px;
+  height: 34px;
+  margin-left: -54px;
+  background: linear-gradient(180deg, #FFE1C4, #F7C39F);
+  box-shadow: inset 0 -6px 0 rgba(200, 103, 74, .12);
+}
+
+.layer-bottom {
+  bottom: 40px;
+  width: 150px;
+  height: 40px;
+  margin-left: -75px;
+  background: linear-gradient(180deg, #F6C6B2, #E7A184);
+  box-shadow: inset 0 -8px 0 rgba(200, 103, 74, .14);
+}
+
+/* 盘子 */
+.plate {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  width: 190px;
+  height: 16px;
+  margin-left: -95px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #FFFFFF, #F3E2D2);
+  box-shadow: 0 8px 18px rgba(160, 110, 80, .22);
+}
+
+/* ---------- 吹蜡烛的火花 ---------- */
+/* 图层盖在蛋糕上方，只负责放火花，不吃点击 */
+.spark-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* 每一颗小火花：位置和飞行方向由 script.js 用 --tx / --ty 指定 */
+.spark {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFF9DE 0%, #FFC964 45%, rgba(255, 150, 60, 0) 72%);
+  box-shadow: 0 0 8px 2px rgba(255, 196, 100, .7);
+  opacity: 0;
+  animation: sparkFly .7s ease-out forwards;
+}
+
+@keyframes sparkFly {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.4);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, -60px))) scale(.25);
+  }
+}
+
+.cake-actions { text-align: center; }
+
+.wish-text {
+  margin: 18px 0 0;
+  font-family: var(--font-serif);
+  color: var(--clay);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.wish-text.is-visible { opacity: 1; transform: none; }
+
+/* =========================================================
+   ③ 心愿卡片
+   ========================================================= */
+.wish-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.wish-card {
+  background: linear-gradient(180deg, #FFFDFA, #FFF3E7);
+  border: 1px solid rgba(224, 167, 94, .3);
+  border-radius: 14px;
+  padding: 18px 20px;
+  font-size: .98rem;
+  box-shadow: 0 8px 20px rgba(160, 110, 80, .1);
+}
+
+/* =========================================================
+   ④ 落款 / 页脚
+   ========================================================= */
+.sign { text-align: center; }
+.sign p { margin: 6px 0; }
+
+.signature {
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 5vw, 1.3rem);
+  color: var(--clay);
+}
+
+.sig-heart {
+  font-size: 1.5rem;
+  color: #DE7A63;
+  animation: beat 1.5s ease-in-out infinite;
+}
+
+@keyframes beat {
+  0%, 100% { transform: scale(1);   }
+  30%      { transform: scale(1.18); }
+}
+
+.footer {
+  text-align: center;
+  padding: 30px 20px calc(30px + env(safe-area-inset-bottom));
+  color: var(--ink-soft);
+  font-size: .82rem;
+  letter-spacing: .16em;
+}
+
+/* =========================================================
+   全屏烟花（点「打开贺卡」时播放，播完自动淡出）
+   ========================================================= */
+.fireworks {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  /* 暖色的深色底，让烟花亮起来；不想压暗背景可以删掉这行 */
+  background: radial-gradient(circle at 50% 62%, rgba(78, 48, 38, .78), rgba(48, 28, 22, .93));
+  opacity: 0;
+  transition: opacity .45s ease;
+}
+
+.fireworks.is-on { opacity: 1; }    /* 淡入 */
+.fireworks[hidden] { display: none; }
+
+.fireworks canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fireworks-tip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(30px + env(safe-area-inset-bottom));
+  margin: 0;
+  text-align: center;
+  color: rgba(255, 246, 236, .7);
+  font-size: .78rem;
+  letter-spacing: .2em;
+  animation: tipIn 1.4s ease .9s both;
+}
+
+@keyframes tipIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* =========================================================
+   大屏适配（平板 / 电脑）
+   ========================================================= */
+@media (min-width: 640px) {
+  .wish-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 720px) {
+  .section { padding-top: 76px; padding-bottom: 76px; }
+  .cake { width: 220px; height: 200px; }
+}
+
+/* 系统开启「减少动态效果」时，关闭所有动画 */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .spark { display: none; }   /* 关掉动态效果时不放火花 */
+}

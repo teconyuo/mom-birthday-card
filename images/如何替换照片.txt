@@ -1,0 +1,19 @@
+照片替换说明
+==============
+
+1. 准备好妈妈的照片（建议竖版，比例 4:5，例如 1200×1500）。
+2. 把照片压缩到 500KB 以内，手机打开会更快。
+3. 直接覆盖下面这三个文件（保持文件名不变，不用改任何代码）：
+
+   images/photo-1.jpg   →  照片墙第 1 张
+   images/photo-2.jpg   →  照片墙第 2 张
+   images/photo-3.jpg   →  照片墙第 3 张
+
+4. 如果你喜欢用 .png / .jpeg / .webp：
+   用记事本打开 index.html，搜索 photo-1.jpg，把文件名改成你自己的即可。
+
+5. 想加第 4 张照片：
+   把 index.html 里任意一个 <figure class="polaroid">…</figure> 整块复制一份，
+   改掉图片文件名和照片说明；窄屏会自动变成一列，大屏每行三张。
+
+小提示：照片说明文字在 <figcaption> 标签里；照片的宽高比在 style.css 的 .polaroid img 里（aspect-ratio）。

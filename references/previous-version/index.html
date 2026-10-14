@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <!-- 手机端适配：按屏幕宽度缩放，并支持刘海屏安全区域 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FFF6EC">
+  <meta name="description" content="送给妈妈的生日贺卡">
+  <title>妈妈，生日快乐 ❤</title>
+
+  <!-- 只用本地 CSS，不依赖任何外部框架 / CDN，离线也能正常打开 -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- 万一浏览器禁用了 JavaScript，文字也照样完整显示 -->
+  <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+</head>
+
+<body>
+
+  <!-- ================= ① 封面 ================= -->
+  <header class="hero">
+    <!-- 缓缓飘落的小花瓣（不想要可以整段删掉） -->
+    <div class="petals" aria-hidden="true">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+
+    <div class="hero-inner">
+      <p class="hero-kicker">给我最爱的妈妈</p>
+      <h1 class="hero-title">妈妈<br><span>生日快乐</span></h1>
+      <p class="hero-sub">这一年，也想把最好的温柔都送给你</p>
+      <button id="openBtn" class="btn-main">打开贺卡 ❤</button>
+    </div>
+
+    <p class="scroll-hint" aria-hidden="true">↓</p>
+  </header>
+
+  <main>
+
+    <!-- ================= ② 祝福信 ================= -->
+    <section id="letter" class="section">
+      <h2 class="section-title reveal">写给你的话</h2>
+
+      <div class="letter-card">
+        <p class="reveal" style="--d:0ms">亲爱的妈妈：</p>
+        <p class="reveal" style="--d:150ms">
+          小时候，是你牵着我的手走过每一条街；长大以后我才慢慢懂得，
+          那些看起来平平淡淡的日子里，藏着你全部的爱。
+        </p>
+        <p class="reveal" style="--d:300ms">
+          你总把最好的留给家里，把辛苦和疲惫藏在身后。
+          今天，我想把一份小小的温柔送给你，就像这些年你一直对我做的那样。
+        </p>
+        <p class="reveal" style="--d:450ms">
+          愿你眼角的笑意多一点，肩上的担子轻一点；
+          想去的地方都能抵达，想做的事都还来得及。
+        </p>
+        <p class="reveal" style="--d:600ms">妈妈，生日快乐。</p>
+        <p class="reveal" style="--d:750ms">谢谢你，做我的妈妈。</p>
+      </div>
+    </section>
+
+    <!-- ================= ③ 照片墙 ================= -->
+    <section class="section">
+      <h2 class="section-title reveal">我们的时光</h2>
+      <!-- 想换成自己的照片：把 images/photo-1.jpg、photo-2.jpg、photo-3.jpg 直接替换掉就行 -->
+      <p class="section-note reveal">（把 images 文件夹里的照片换成我们的合影吧）</p>
+
+      <div class="photo-grid">
+        <figure class="polaroid reveal" style="--d:0ms">
+          <img src="images/photo-1.jpg" alt="妈妈的照片 1">
+          <figcaption>照片说明可以写在这里</figcaption>
+        </figure>
+
+        <figure class="polaroid reveal" style="--d:150ms">
+          <img src="images/photo-2.jpg" alt="妈妈的照片 2">
+          <figcaption>照片说明可以写在这里</figcaption>
+        </figure>
+
+        <figure class="polaroid reveal" style="--d:300ms">
+          <img src="images/photo-3.jpg" alt="妈妈的照片 3">
+          <figcaption>照片说明可以写在这里</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================= ④ 蛋糕与许愿 ================= -->
+    <section class="section">
+      <h2 class="section-title reveal">许个愿吧</h2>
+
+      <div class="cake-wrap reveal">
+        <div class="cake" id="cake">
+          <div class="candle"><span class="flame"></span></div>
+          <div class="layer layer-top"></div>
+          <div class="layer layer-bottom"></div>
+          <div class="plate"></div>
+        </div>
+      </div>
+
+      <div class="cake-actions reveal">
+        <button id="blowBtn" class="btn-main btn-soft">轻轻吹灭蜡烛</button>
+        <p id="wishText" class="wish-text">愿望已经悄悄收好啦 ✨</p>
+      </div>
+    </section>
+
+    <!-- ================= ⑤ 心愿卡片 ================= -->
+    <section class="section">
+      <h2 class="section-title reveal">愿你</h2>
+
+      <div class="wish-grid">
+        <div class="wish-card reveal" style="--d:0ms">愿你每天都能睡个好觉，醒来有热乎的早饭。</div>
+        <div class="wish-card reveal" style="--d:120ms">愿你的腰不再酸，腿不再疼，走多远都有力气。</div>
+        <div class="wish-card reveal" style="--d:240ms">愿你喜欢的花一直开着，喜欢的人也一直陪着你。</div>
+        <div class="wish-card reveal" style="--d:360ms">愿岁月温柔待你，像我小时候你待我那样。</div>
+      </div>
+    </section>
+
+    <!-- ================= ⑥ 落款 ================= -->
+    <section class="section sign">
+      <p class="reveal">永远爱你的人</p>
+      <p class="signature reveal" style="--d:150ms">—— <span id="signature">你的孩子</span></p>
+      <p class="sig-heart reveal" style="--d:300ms">❤</p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>生日快乐，妈妈</p>
+  </footer>
+
+  <!-- 点照片可以放大查看 -->
+  <div id="lightbox" class="lightbox" hidden>
+    <button id="lightboxClose" class="lightbox-close" aria-label="关闭">×</button>
+    <img id="lightboxImg" alt="">
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

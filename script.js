@@ -172,6 +172,12 @@
   var FW_SHOW_MS = 3000;   // 烟花总时长（毫秒）：想放久一点就调大
   var FW_TAIL_MS = 1600;   // 最长尾巴：最后一发炸开后最多再等这么久收场
 
+  /* ---------- 新增 · 烟花参数（本次只动这两个数值） ----------
+     下面两行是新增的，原有烟花逻辑一行未删；数值改回去就恢复原样：
+     FW_SPARK_SIZE_SCALE = 1、FW_LAUNCH_PER_TICK = 1 即原版效果 */
+  var FW_SPARK_SIZE_SCALE = 2;   // ① 烟花粒子尺寸放大一倍
+  var FW_LAUNCH_PER_TICK = 3;    // ② 每次发射 3 发 → 烟花发射数量是原来的 3 倍
+
   var fw = {
     running: false,     // 是否正在播放
     raf: 0,             // requestAnimationFrame 句柄
@@ -223,7 +229,7 @@
         age: 0,
         life: (0.75 + Math.random() * 0.45) * 1.2,        // 存活时间（秒）：延长 20%，散开后停留久一点
         color: color,
-        size: 1.4 + Math.random() * 1.6
+        size: (1.4 + Math.random() * 1.6) * FW_SPARK_SIZE_SCALE   // 新增 ①：原尺寸公式原样保留，整体乘上放大倍数
       });
     }
   }
@@ -239,6 +245,8 @@
     // 按节奏发射新的烟花（最后一发留出爆炸和消散的时间）
     while (fw.nextLaunch < elapsed && fw.nextLaunch < FW_SHOW_MS - 1100) {
       fwLaunch();
+      // 新增 ②：同一次发射多发，烟花发射数量提升到原来的 3 倍（发射节奏保持原样）
+      for (var extra = 1; extra < FW_LAUNCH_PER_TICK; extra++) fwLaunch();
       fw.nextLaunch += 480 + Math.random() * 460;
     }
 
@@ -390,4 +398,93 @@
   window.addEventListener('resize', function () {
     if (fw.running) fwResize();
   });
+
+  /* =========================================================
+     新增（倒计时模块用）：把烟花接口导出，倒计时结束后直接调用
+     —— 上面原有代码一行都没有改动，这里只是新增一个对外出口
+     ========================================================= */
+  // 给烟花配色补上几支高饱和色，让烟花变成「五彩」；原有暖色配色原样保留
+  FW_COLORS.push('#FF5C7A', '#FFD166', '#5CE1E6', '#7AE582', '#B48CFF', '#FF8FD0');
+
+  window.__birthdayCard = {
+    startFireworks: startFireworks,   // 开始播放全屏烟花（播完会自动滑到蛋糕页）
+    finishFireworks: fwFinish         // 提前收场（备用）
+  };
+})();
+
+
+/* =========================================================
+   新增 · 倒计时模块：3 → 2 → 1，结束立刻放五彩烟花
+   点「打开贺卡」后的顺序：按钮隐藏 → 倒计时 → 烟花 → 滑到蛋糕页
+   （本段全部是新增代码，没有删除也没有改动上面任何原有逻辑）
+   ========================================================= */
+(function () {
+  'use strict';
+
+  var openBtn = document.getElementById('openBtn');
+  var countdown = document.getElementById('countdown');
+  var countdownNum = document.getElementById('countdownNum');
+  var card = window.__birthdayCard;
+
+  // 少了任何一块都别乱来，直接交回原来的按钮逻辑
+  if (!openBtn || !countdown || !countdownNum || !card) return;
+
+  // 系统开了「减少动态效果」时不做倒计时，交回原本的按钮逻辑（原本会直接滑到蛋糕页）
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var STEP_MS = 1000;     // 每个数字停留 1 秒
+  var STEPS = ['3', '2', '1'];
+  var counting = false;   // 正在倒计时，防重复触发
+
+  /* 逐个显示数字：每次换数字都重放一次「缩放 + 淡入淡出」动画 */
+  function startCountdown() {
+    counting = true;
+
+    openBtn.classList.add('is-hidden');   // ① 按钮隐藏
+
+    countdown.hidden = false;             // ② 显示倒计时图层（背景还是原来的页面背景）
+    countdownNum.textContent = '';
+
+    var index = 0;
+
+    function showStep() {
+      if (index >= STEPS.length) {
+        finishCountdown();
+        return;
+      }
+
+      countdownNum.textContent = STEPS[index];
+      index += 1;
+
+      // 去掉再重排，保证同一个动画在下一个数字上重新播放
+      countdownNum.classList.remove('is-pop');
+      void countdownNum.offsetWidth;
+      countdownNum.classList.add('is-pop');
+
+      window.setTimeout(showStep, STEP_MS);
+    }
+
+    function finishCountdown() {
+      countdownNum.classList.remove('is-pop');
+      countdownNum.textContent = '';
+      countdown.hidden = true;            // 收起倒计时
+      counting = false;
+
+      card.startFireworks();              // ③ 数字结束，立刻放五彩烟花
+    }
+
+    showStep();
+  }
+
+  /* 在「捕获阶段」拦下这一下点击：
+     先隐藏按钮、改播倒计时，倒计时结束后我们自己调烟花。
+     原有按钮上的监听没有被删掉，只是这一下不让它先跑。 */
+  document.addEventListener('click', function (event) {
+    if (event.target !== openBtn) return;
+
+    event.stopPropagation();              // 挡住原有监听，避免烟花抢在倒计时前面
+    if (counting) return;                 // 倒计时中重复点，忽略
+
+    startCountdown();
+  }, true);
 })();

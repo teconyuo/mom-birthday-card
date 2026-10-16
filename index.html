@@ -85,6 +85,11 @@
     <p>生日快乐，妈妈</p>
   </footer>
 
+  <!-- 倒计时图层（新增）：点「打开贺卡」后出现 3 → 2 → 1，倒计时一结束就立刻放烟花 -->
+  <div id="countdown" class="countdown" hidden aria-hidden="true">
+    <p class="countdown-num" id="countdownNum"></p>
+  </div>
+
   <!-- 全屏烟花图层：平时隐藏，点「打开贺卡」时由 script.js 打开并播放 -->
   <div id="fireworks" class="fireworks" hidden aria-hidden="true">
     <canvas id="fireworksCanvas"></canvas>

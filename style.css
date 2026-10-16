@@ -449,3 +449,55 @@ img { max-width: 100%; display: block; }
   .reveal { opacity: 1; transform: none; }
   .spark { display: none; }   /* 关掉动态效果时不放火花 */
 }
+
+/* =========================================================
+   新增 · 倒计时「3 → 2 → 1」（点「打开贺卡」后播放）
+   —— 以下全部是新增样式，上面原有的规则一行都没有改动
+   ========================================================= */
+.countdown {
+  position: fixed;
+  inset: 0;
+  z-index: 95;              /* 盖在封面之上；倒计时结束立刻让位给烟花图层 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;     /* 不吃点击 */
+  background: transparent;  /* 背景沿用原来页面的背景，不加任何遮罩 */
+}
+.countdown[hidden] { display: none; }
+
+.countdown-num {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  /* 居中超大数字：小屏也不会溢出 */
+  font-size: clamp(7rem, 38vw, 18rem);
+  line-height: 1;
+  color: #b96b6b;           /* 暖粉棕 */
+  text-shadow:
+    /* 一圈同色系柔光：数字底下就是封面文字，这样叠上来也看得清 */
+    0 0 14px rgba(255, 249, 242, .96),
+    0 0 40px rgba(255, 246, 236, .86),
+    0 0 90px rgba(255, 243, 231, .6),
+    0 0 34px rgba(185, 107, 107, .3),
+    0 14px 44px rgba(185, 107, 107, .2);
+  will-change: transform, opacity;
+}
+
+/* 每个数字：缩放 + 淡入淡出，一次 1 秒（由 script.js 逐个切换） */
+.countdown-num.is-pop { animation: countdownPop 1s ease-in-out both; }
+
+@keyframes countdownPop {
+  0%   { opacity: 0; transform: scale(.55); }
+  22%  { opacity: 1; transform: scale(1.04); }
+  40%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* 「打开贺卡」按钮点过之后隐藏（保留占位，封面不会跳一下） */
+#openBtn.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(.96);
+  transition: opacity .4s ease, transform .4s ease, visibility 0s linear .4s;
+}

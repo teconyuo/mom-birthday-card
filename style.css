@@ -1,503 +1,205 @@
-/* =========================================================
-   妈妈生日贺卡 · 样式表
-   暖色调 + 柔和风格，手机优先（先写手机，再写大屏）
-   想换配色：只改下面 :root 里的颜色就好
-   ========================================================= */
-
 :root {
-  --cream: #FFF6EC;   /* 背景奶油色 */
-  --peach: #FFE6CB;   /* 蜜桃色 */
-  --blush: #F6C6B2;   /* 淡胭脂色 */
-  --clay: #C8674A;    /* 主色：陶土红 */
-  --clay-dark: #A85337;
-  --gold: #E0A75E;    /* 点缀金 */
-  --ink: #6B4A3D;     /* 正文暖棕 */
-  --ink-soft: #8C6B5C;/* 次要文字 */
-  --card: #FFFDFA;    /* 卡片底色 */
-  --shadow: 0 10px 30px rgba(160, 110, 80, .14);
-
-  --radius: 18px;
-  /* 标题用衬线字体，更有贺卡的温柔感；不同系统各取所长 */
-  --font-serif: "Songti SC", "STSong", "KaiTi", "楷体", "SimSun", "宋体", "Noto Serif SC", Georgia, serif;
-  --font-sans: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+  --paper: #FFFCF6;
+  --cream: #F8E9D5;
+  --berry: #9B4436;
+  --pink: #E5A08A;
+  --leaf: #6D754C;
+  --ink: #503E32;
+  --muted: #78604F;
+  --line: #E4D4C0;
+  --font-letter: "STKaiti", "KaiTi", "Kaiti SC", "Songti SC", "Noto Serif CJK SC", serif;
+  --font-body: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
 }
-
 * { box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
-
 body {
   margin: 0;
-  font-family: var(--font-sans);
   color: var(--ink);
-  background-color: var(--cream);
-  /* 两团柔和的光晕，让背景不那么平 */
-  background-image:
-    radial-gradient(60vw 60vw at 12% 8%, rgba(255, 214, 170, .75), transparent 70%),
-    radial-gradient(70vw 70vw at 88% 30%, rgba(246, 198, 178, .55), transparent 72%),
-    linear-gradient(180deg, #FFF8F0 0%, #FFF3E6 45%, #FFEFE6 100%);
-  background-attachment: fixed;
-  line-height: 1.85;
-  overflow-x: hidden;          /* 防止手机上左右晃动 */
+  background: var(--paper);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.8;
   -webkit-text-size-adjust: 100%;
 }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--berry); outline-offset: 6px; }
+[hidden] { display: none !important; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-img { max-width: 100%; display: block; }
-
-.section {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 56px 20px;
-  padding-left: max(20px, env(safe-area-inset-left));
-  padding-right: max(20px, env(safe-area-inset-right));
-}
-
-.section-title {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  font-size: clamp(1.5rem, 6vw, 2.1rem);
-  text-align: center;
-  color: var(--clay);
-  letter-spacing: .06em;
-  margin: 0 0 28px;
-}
-
-.section-title::after {
-  content: "";
-  display: block;
-  width: 52px;
-  height: 2px;
-  margin: 14px auto 0;
-  border-radius: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-/* ---------- 渐显文字动画 ---------- */
-/* 元素一进入屏幕就柔和地淡入上移；--d 用来做错开的延迟 */
-.reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity .9s ease var(--d, 0ms), transform .9s ease var(--d, 0ms);
-}
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
-
-/* =========================================================
-   ① 封面
-   ========================================================= */
 .hero {
-  position: relative;
-  min-height: 100vh;       /* 老浏览器兜底 */
-  min-height: 100svh;      /* 手机浏览器地址栏收起时也不会被裁掉 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 22px calc(40px + env(safe-area-inset-bottom));
-  overflow: hidden;
+  padding: 0 max(32px, env(safe-area-inset-right)) 0 max(32px, env(safe-area-inset-left));
+  background: var(--cream);
 }
-
+.masthead, .hero-inner, .hero-bottom { width: min(1120px, 100%); margin-inline: auto; }
+.masthead { min-height: 100px; display: flex; align-items: center; justify-content: space-between; gap: 24px; font-size: 13px; }
+.home-link { display: inline-flex; align-items: center; gap: 11px; }
+.home-link svg { width: 27px; height: 27px; color: var(--berry); }
+.masthead-note { color: var(--muted); }
 .hero-inner {
-  position: relative;
-  z-index: 2;
-  animation: heroIn 1.2s ease both;
+  min-height: min(690px, calc(100svh - 180px));
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  align-items: center;
+  gap: 24px;
+  padding-block: 28px 50px;
+  animation: arrive .8s ease both;
 }
-
-@keyframes heroIn {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.hero-kicker {
-  margin: 0 0 10px;
-  font-size: .95rem;
-  letter-spacing: .3em;
-  color: var(--ink-soft);
-}
-
-.hero-title {
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: clamp(2.6rem, 13vw, 4.4rem);
-  line-height: 1.25;
-  margin: 0;
-  color: var(--clay);
-  letter-spacing: .04em;
-  text-shadow: 0 2px 0 rgba(255, 255, 255, .8);
-}
-
-.hero-title span {
-  display: inline-block;
-  color: var(--clay-dark);
-}
-
-.hero-sub {
-  margin: 20px 0 34px;
-  font-size: clamp(.95rem, 4vw, 1.1rem);
-  color: var(--ink-soft);
-}
-
-/* 主按钮：手机上好点按（高度 48px 以上） */
+.hero-copy { padding-left: 36px; padding-bottom: 20px; }
+.hero-title { margin: 0; color: var(--berry); font-family: var(--font-letter); font-size: clamp(58px, 6.6vw, 88px); font-weight: 400; line-height: 1.34; letter-spacing: -.045em; }
+.hero-sub { margin: 28px 0 34px; font-size: 15px; line-height: 2; color: var(--muted); }
 .btn-main {
-  display: inline-block;
-  min-height: 48px;
-  padding: 14px 34px;
-  border: 0;
-  border-radius: 999px;
-  font-family: inherit;
-  font-size: 1rem;
-  letter-spacing: .08em;
-  color: #fff;
-  background: linear-gradient(135deg, #D97A58, var(--clay));
-  box-shadow: 0 10px 22px rgba(200, 103, 74, .32);
-  cursor: pointer;
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-.btn-main:active { transform: scale(.97); }
-.btn-main:hover { box-shadow: 0 12px 26px rgba(200, 103, 74, .4); }
-
-.btn-soft {
-  background: linear-gradient(135deg, #E8A87C, #D98B6A);
-  box-shadow: 0 10px 22px rgba(200, 130, 90, .3);
-}
-
-.scroll-hint {
-  position: absolute;
-  bottom: calc(24px + env(safe-area-inset-bottom));
-  margin: 0;
-  color: var(--blush);
-  font-size: 1.4rem;
-  animation: floatY 2.4s ease-in-out infinite;
-}
-
-@keyframes floatY {
-  0%, 100% { transform: translateY(0); opacity: .5; }
-  50%      { transform: translateY(8px); opacity: 1; }
-}
-
-/* 缓缓飘落的小花瓣 */
-.petals { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-.petals span {
-  position: absolute;
-  top: -6%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50% 0 50% 50%;
-  background: var(--blush);
-  opacity: .5;
-  animation: fall 14s linear infinite;
-}
-.petals span:nth-child(1) { left: 8%;  animation-delay: 0s;   }
-.petals span:nth-child(2) { left: 26%; animation-delay: 3s;   animation-duration: 17s; }
-.petals span:nth-child(3) { left: 44%; animation-delay: 6s;   animation-duration: 15s; }
-.petals span:nth-child(4) { left: 62%; animation-delay: 2s;   animation-duration: 19s; }
-.petals span:nth-child(5) { left: 78%; animation-delay: 8s;   animation-duration: 16s; }
-.petals span:nth-child(6) { left: 92%; animation-delay: 5s;   animation-duration: 18s; }
-
-@keyframes fall {
-  0%   { transform: translateY(0) rotate(0deg);      opacity: 0; }
-  10%  { opacity: .5; }
-  100% { transform: translateY(108vh) rotate(320deg); opacity: 0; }
-}
-
-/* =========================================================
-   ② 蛋糕与许愿
-   ========================================================= */
-.cake-wrap {
-  position: relative;      /* 火花图层的定位基准 */
-  display: flex;
+  min-height: 52px;
+  padding: 13px 27px;
+  display: inline-flex;
   justify-content: center;
-  padding: 10px 0 26px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--berry);
+  border-radius: 6px;
+  background: var(--berry);
+  color: var(--paper);
+  font-size: 14px;
+  line-height: 1.8;
+  transition: background .2s, transform .2s;
 }
+.btn-main svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.4; }
+.btn-main:active { transform: translateY(2px); }
+.btn-main:disabled { cursor: default; }
+.hero-art { margin: -20px -10px 0 0; }
+.hero-art img { width: 100%; max-height: 570px; object-fit: contain; }
+.hero-art figcaption { margin-top: 4px; text-align: center; font-family: var(--font-letter); font-size: 17px; color: var(--muted); transform: rotate(-3deg); }
+.hero-bottom { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 12px; }
+.page-link { min-height: 44px; display: inline-flex; align-items: center; gap: 18px; }
+.page-link span { font-size: 18px; }
 
-.cake {
-  position: relative;
-  width: 180px;
-  height: 170px;
+.cake-section {
+  width: min(1050px, calc(100% - 80px));
+  margin: 0 auto;
+  padding-block: 124px 112px;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 70px;
+  align-items: center;
+  scroll-margin-top: 32px;
 }
-
-/* 蜡烛 */
+.cake-section:focus { outline: none; }
+.cake-scene { position: relative; min-height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #F9EFDF; border-radius: 48% 48% 6px 6px; }
+.cake-wrap { position: relative; width: 100%; display: flex; justify-content: center; padding-top: 20px; }
+.cake { position: relative; width: 250px; height: 225px; }
 .candle {
   position: absolute;
-  left: 50%;
-  bottom: 78px;
-  width: 10px;
-  height: 46px;
-  margin-left: -5px;
-  border-radius: 5px;
-  background: repeating-linear-gradient(180deg, #FFF3E4 0 8px, #F3B7A3 8px 16px);
+  z-index: 2;
+  left: calc(50% - 6px);
+  bottom: 137px;
+  width: 12px;
+  height: 49px;
+  border: 1px solid #BA7C61;
+  border-radius: 3px 3px 0 0;
+  background: repeating-linear-gradient(-35deg, #FFF8EB 0 8px, #E5A08A 8px 13px);
 }
+.flame { position: absolute; left: -1px; top: -28px; width: 12px; height: 22px; border-radius: 60% 40% 50% 50%; background: #EBAE55; box-shadow: inset 3px -5px 0 #F8D899, 0 0 18px #EBAE5538; transform: rotate(8deg); transform-origin: bottom center; animation: candlelight 2.4s ease-in-out infinite; transition: opacity .35s; }
+.cake.is-out .flame { opacity: 0; animation: none; }
+.layer { position: absolute; left: 50%; z-index: 1; }
+.layer-top { bottom: 122px; width: 178px; height: 38px; margin-left: -89px; border: 1.5px solid #CFA286; border-radius: 50%; background: #FFFCF6; z-index: 3; }
+.layer-top::after { content: ""; position: absolute; inset: 7px 13px; border: 1px dashed #D9BA97; border-radius: 50%; }
+.layer-bottom { bottom: 57px; width: 178px; height: 84px; margin-left: -89px; border: 1.5px solid #CFA286; border-top: 0; border-radius: 0 0 50% 50% / 0 0 23% 23%; background: #F0C6A4; box-shadow: inset 0 -12px #E0AB83; }
+.layer-bottom::before { content: ""; position: absolute; top: 9px; left: -1px; width: 177px; height: 32px; background: #FFFCF6; border-bottom: 1.5px solid #CFA286; clip-path: polygon(0 0, 100% 0, 100% 55%, 94% 64%, 91% 100%, 87% 100%, 83% 70%, 69% 78%, 65% 100%, 60% 100%, 56% 82%, 38% 80%, 34% 98%, 29% 98%, 25% 70%, 9% 60%, 5% 90%, 1% 85%); }
+.cake-cherry { position: absolute; width: 15px; height: 14px; right: 29px; top: 6px; background: var(--berry); border-radius: 50%; z-index: 1; }
+.cake-cherry::before { content: ""; position: absolute; width: 8px; height: 12px; top: -9px; left: 7px; border-left: 1.5px solid var(--leaf); transform: rotate(30deg); }
+.plate { position: absolute; bottom: 41px; left: calc(50% - 116px); width: 232px; height: 42px; border-radius: 50%; border: 1.5px solid #C7AF8E; background: #EBDAC0; box-shadow: 0 6px 0 #DCC5A5; }
+.cake-caption { margin: 0 0 22px; font-family: var(--font-letter); font-size: 17px; color: var(--muted); }
+.cake-sparkle { position: absolute; color: #B39367; font-size: 32px; }
+.sparkle-one { left: 20%; top: 20%; }
+.sparkle-two { right: 17%; top: 36%; font-size: 22px; }
+.section-title { margin: 0; font-family: var(--font-letter); font-size: clamp(34px, 3.4vw, 44px); font-weight: 400; line-height: 1.55; }
+.section-copy { margin: 19px 0 27px; color: var(--muted); font-size: 14px; line-height: 2.1; }
+.btn-outline { background: transparent; color: var(--berry); }
+.wish-text { min-height: 29px; margin: 18px 0 0; color: var(--berry); font-family: var(--font-letter); font-size: 18px; }
+.wish-text.is-visible { animation: wish-in .5s ease both; }
+.spark-layer { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.spark { position: absolute; border-radius: 50%; background: #EBAE55; opacity: 0; animation: spark-fly .7s ease-out forwards; }
 
-/* 烛火 */
-.flame {
-  position: absolute;
-  left: 50%;
-  top: -22px;
-  width: 14px;
-  height: 20px;
-  margin-left: -7px;
-  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
-  background: radial-gradient(circle at 50% 62%, #FFF6C9 0%, #FFC46B 55%, #F1913C 100%);
-  box-shadow: 0 0 26px 8px rgba(255, 190, 110, .55);
-  transform-origin: 50% 100%;
-  animation: flicker 1.6s ease-in-out infinite;
-  transition: opacity .5s ease, transform .5s ease;
+.wishes-section { width: min(1050px, calc(100% - 80px)); margin: 0 auto; padding-block: 58px 100px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 70px; border-top: 1px solid var(--line); }
+.wishes-heading .section-title { font-size: clamp(32px, 3vw, 40px); }
+.little-flower { width: 72px; height: 100px; margin: 28px 0 0 18px; color: var(--leaf); transform: rotate(-10deg); }
+.wish-list { display: grid; grid-template-columns: 1fr 1fr; gap: 36px 32px; padding-top: 9px; }
+.wish-list p { margin: 0; font-size: 15px; line-height: 2.2; }
+.sign { padding: 76px 24px 80px; text-align: center; background: var(--cream); }
+.sign-heart { width: 36px; height: 33px; margin: 0 auto 24px; color: var(--berry); }
+.sign-message { margin: 0; font-family: var(--font-letter); color: var(--berry); font-size: clamp(30px, 4vw, 40px); line-height: 1.8; }
+.signature { width: fit-content; margin: 32px auto 0; }
+.signature p { margin: 4px 0; color: var(--muted); font-size: 13px; }
+.signature #signature { font-family: var(--font-letter); font-size: 23px; color: var(--ink); transform: rotate(-5deg); }
+.footer { width: min(1120px, calc(100% - 64px)); margin-inline: auto; padding: 22px 0 calc(22px + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 12px; color: var(--muted); }
+
+.countdown, .fireworks { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.countdown { z-index: 95; background: #F8E9D5F5; }
+.countdown-label { margin: 0; font-family: var(--font-letter); font-size: 24px; color: var(--berry); }
+.countdown-num { margin: 20px 0 70px; font-family: var(--font-letter); font-size: clamp(120px, 28vw, 240px); line-height: 1.2; color: var(--berry); }
+.countdown-num.is-pop { animation: countdown-pop 1s ease both; }
+.fireworks { z-index: 90; background: #302219; opacity: 0; transition: opacity .4s; }
+.fireworks.is-on { opacity: 1; }
+.fireworks canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fireworks-greeting { position: relative; pointer-events: none; font-family: var(--font-letter); font-size: clamp(32px, 6vw, 64px); color: #FFF4DF; }
+.fireworks-tip { position: absolute; bottom: calc(32px + env(safe-area-inset-bottom)); padding: 12px 18px; border: 1px solid #FFFFFF55; border-radius: 5px; background: #302219AA; color: #FAEAD1; font-size: 13px; }
+.fireworks-tip:focus-visible { outline-color: #FAEAD1; }
+#openBtn.is-hidden { visibility: hidden; }
+
+@keyframes arrive { from { opacity: 0; } to { opacity: 1; } }
+@keyframes candlelight { 50% { transform: rotate(-5deg) scaleY(.93); } }
+@keyframes wish-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes countdown-pop { 0% { opacity: 0; transform: scale(.85); } 22%, 65% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.08); } }
+@keyframes spark-fly { 10% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.2); } }
+@media (hover: hover) {
+  .btn-main:hover { background: #80362B; }
+  .btn-outline:hover { color: var(--paper); }
+  .page-link:hover { color: var(--berry); }
 }
-
-@keyframes flicker {
-  0%, 100% { transform: scaleY(1) translateX(0); }
-  50%      { transform: scaleY(1.08) translateX(1px); }
+@media (min-width: 1500px) { .hero-inner { min-height: 720px; } }
+@media (max-width: 900px) {
+  .hero-copy { padding-left: 0; }
+  .hero-inner { min-height: 580px; }
+  .hero-title { font-size: 64px; }
+  .cake-section, .wishes-section { gap: 40px; }
+  .wish-list { grid-template-columns: 1fr; gap: 24px; }
+  .wishes-section { grid-template-columns: 1fr 1.2fr; }
 }
-
-/* 吹灭蜡烛后 */
-.cake.is-out .flame { opacity: 0; transform: scaleY(.2); }
-
-/* 蛋糕两层 */
-.layer {
-  position: absolute;
-  left: 50%;
-  border-radius: 10px 10px 8px 8px;
+@media (max-width: 760px) {
+  .hero { padding-inline: max(24px, env(safe-area-inset-left)) max(24px, env(safe-area-inset-right)); }
+  .masthead { min-height: 76px; font-size: 12px; gap: 12px; }
+  .home-link { gap: 8px; }
+  .home-link svg { width: 23px; height: 23px; }
+  .masthead-note { font-size: 11px; }
+  .hero-inner { min-height: auto; grid-template-columns: 1fr; gap: 0; padding-block: 35px 23px; }
+  .hero-copy { padding: 0 0 0 8px; }
+  .hero-title { font-size: clamp(54px, 15vw, 72px); line-height: 1.24; }
+  .hero-sub { margin-block: 18px 24px; font-size: 14px; }
+  .hero-art { margin: 5px -5px 0; }
+  .hero-art img { width: 100%; height: auto; max-height: 350px; }
+  .hero-art figcaption { margin-top: -3px; font-size: 16px; }
+  .hero-bottom { min-height: 70px; font-size: 10px; gap: 12px; }
+  .page-link { gap: 10px; white-space: nowrap; }
+  .cake-section { width: calc(100% - 48px); grid-template-columns: 1fr; padding-block: 72px 58px; gap: 32px; }
+  .cake-scene { width: min(360px, 100%); min-height: 300px; justify-self: center; }
+  .cake { height: 215px; }
+  .cake-copy { text-align: center; }
+  .section-title { font-size: 35px; }
+  .section-copy { margin-top: 12px; }
+  .wishes-section { width: calc(100% - 48px); grid-template-columns: 1fr; padding-block: 42px 64px; gap: 30px; }
+  .wishes-heading { position: relative; }
+  .wishes-heading .section-title { font-size: 34px; }
+  .little-flower { position: absolute; top: -8px; right: 2px; margin: 0; width: 65px; height: 100px; transform: rotate(12deg); }
+  .wish-list { gap: 22px; padding-top: 0; }
+  .wish-list p { font-size: 15px; }
+  .wish-list p br { display: none; }
+  .sign { padding-block: 56px 60px; }
+  .footer { width: calc(100% - 48px); font-size: 11px; }
 }
-
-.layer-top {
-  bottom: 74px;
-  width: 108px;
-  height: 34px;
-  margin-left: -54px;
-  background: linear-gradient(180deg, #FFE1C4, #F7C39F);
-  box-shadow: inset 0 -6px 0 rgba(200, 103, 74, .12);
-}
-
-.layer-bottom {
-  bottom: 40px;
-  width: 150px;
-  height: 40px;
-  margin-left: -75px;
-  background: linear-gradient(180deg, #F6C6B2, #E7A184);
-  box-shadow: inset 0 -8px 0 rgba(200, 103, 74, .14);
-}
-
-/* 盘子 */
-.plate {
-  position: absolute;
-  bottom: 26px;
-  left: 50%;
-  width: 190px;
-  height: 16px;
-  margin-left: -95px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #FFFFFF, #F3E2D2);
-  box-shadow: 0 8px 18px rgba(160, 110, 80, .22);
-}
-
-/* ---------- 吹蜡烛的火花 ---------- */
-/* 图层盖在蛋糕上方，只负责放火花，不吃点击 */
-.spark-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-/* 每一颗小火花：位置和飞行方向由 script.js 用 --tx / --ty 指定 */
-.spark {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, #FFF9DE 0%, #FFC964 45%, rgba(255, 150, 60, 0) 72%);
-  box-shadow: 0 0 8px 2px rgba(255, 196, 100, .7);
-  opacity: 0;
-  animation: sparkFly .7s ease-out forwards;
-}
-
-@keyframes sparkFly {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(.4);
-  }
-  15% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, -60px))) scale(.25);
-  }
-}
-
-.cake-actions { text-align: center; }
-
-.wish-text {
-  margin: 18px 0 0;
-  font-family: var(--font-serif);
-  color: var(--clay);
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity .6s ease, transform .6s ease;
-}
-.wish-text.is-visible { opacity: 1; transform: none; }
-
-/* =========================================================
-   ③ 心愿卡片
-   ========================================================= */
-.wish-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-.wish-card {
-  background: linear-gradient(180deg, #FFFDFA, #FFF3E7);
-  border: 1px solid rgba(224, 167, 94, .3);
-  border-radius: 14px;
-  padding: 18px 20px;
-  font-size: .98rem;
-  box-shadow: 0 8px 20px rgba(160, 110, 80, .1);
-}
-
-/* =========================================================
-   ④ 落款 / 页脚
-   ========================================================= */
-.sign { text-align: center; }
-.sign p { margin: 6px 0; }
-
-.signature {
-  font-family: var(--font-serif);
-  font-size: clamp(1.1rem, 5vw, 1.3rem);
-  color: var(--clay);
-}
-
-.sig-heart {
-  font-size: 1.5rem;
-  color: #DE7A63;
-  animation: beat 1.5s ease-in-out infinite;
-}
-
-@keyframes beat {
-  0%, 100% { transform: scale(1);   }
-  30%      { transform: scale(1.18); }
-}
-
-.footer {
-  text-align: center;
-  padding: 30px 20px calc(30px + env(safe-area-inset-bottom));
-  color: var(--ink-soft);
-  font-size: .82rem;
-  letter-spacing: .16em;
-}
-
-/* =========================================================
-   全屏烟花（点「打开贺卡」时播放，播完自动淡出）
-   ========================================================= */
-.fireworks {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  /* 暖色的深色底，让烟花亮起来；不想压暗背景可以删掉这行 */
-  background: radial-gradient(circle at 50% 62%, rgba(78, 48, 38, .78), rgba(48, 28, 22, .93));
-  opacity: 0;
-  transition: opacity .45s ease;
-}
-
-.fireworks.is-on { opacity: 1; }    /* 淡入 */
-.fireworks[hidden] { display: none; }
-
-.fireworks canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.fireworks-tip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(30px + env(safe-area-inset-bottom));
-  margin: 0;
-  text-align: center;
-  color: rgba(255, 246, 236, .7);
-  font-size: .78rem;
-  letter-spacing: .2em;
-  animation: tipIn 1.4s ease .9s both;
-}
-
-@keyframes tipIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-/* =========================================================
-   大屏适配（平板 / 电脑）
-   ========================================================= */
-@media (min-width: 640px) {
-  .wish-grid { grid-template-columns: 1fr 1fr; }
-}
-
-@media (min-width: 720px) {
-  .section { padding-top: 76px; padding-bottom: 76px; }
-  .cake { width: 220px; height: 200px; }
-}
-
-/* 系统开启「减少动态效果」时，关闭所有动画 */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-  .reveal { opacity: 1; transform: none; }
-  .spark { display: none; }   /* 关掉动态效果时不放火花 */
-}
-
-/* =========================================================
-   新增 · 倒计时「3 → 2 → 1」（点「打开贺卡」后播放）
-   —— 以下全部是新增样式，上面原有的规则一行都没有改动
-   ========================================================= */
-.countdown {
-  position: fixed;
-  inset: 0;
-  z-index: 95;              /* 盖在封面之上；倒计时结束立刻让位给烟花图层 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;     /* 不吃点击 */
-  background: transparent;  /* 背景沿用原来页面的背景，不加任何遮罩 */
-}
-.countdown[hidden] { display: none; }
-
-.countdown-num {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 700;
-  /* 居中超大数字：小屏也不会溢出 */
-  font-size: clamp(7rem, 38vw, 18rem);
-  line-height: 1;
-  color: #b96b6b;           /* 暖粉棕 */
-  text-shadow:
-    /* 一圈同色系柔光：数字底下就是封面文字，这样叠上来也看得清 */
-    0 0 14px rgba(255, 249, 242, .96),
-    0 0 40px rgba(255, 246, 236, .86),
-    0 0 90px rgba(255, 243, 231, .6),
-    0 0 34px rgba(185, 107, 107, .3),
-    0 14px 44px rgba(185, 107, 107, .2);
-  will-change: transform, opacity;
-}
-
-/* 每个数字：缩放 + 淡入淡出，一次 1 秒（由 script.js 逐个切换） */
-.countdown-num.is-pop { animation: countdownPop 1s ease-in-out both; }
-
-@keyframes countdownPop {
-  0%   { opacity: 0; transform: scale(.55); }
-  22%  { opacity: 1; transform: scale(1.04); }
-  40%  { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.5); }
-}
-
-/* 「打开贺卡」按钮点过之后隐藏（保留占位，封面不会跳一下） */
-#openBtn.is-hidden {
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-6px) scale(.96);
-  transition: opacity .4s ease, transform .4s ease, visibility 0s linear .4s;
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .spark { display: none; }
 }

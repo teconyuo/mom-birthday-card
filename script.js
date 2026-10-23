@@ -1,41 +1,8 @@
-/* =========================================================
-   妈妈生日贺卡 · 交互脚本
-   只用原生 JavaScript，没有任何依赖，一共 3 个功能：
-   1. 文字滚动到屏幕里时淡入
-   2. 点「轻轻吹灭蜡烛」：火花迸发 + 点击音效 + 蜡烛熄灭
-   3. 点「打开贺卡」：先放全屏烟花，放完平滑滑到蛋糕许愿页面
-   ========================================================= */
-
 (function () {
   'use strict';
 
-  // 系统是否开启了「减少动态效果」：开了就跳过烟花、火花这类动画
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* =========================================================
-     1. 渐显文字：滚动到可见区域时添加 is-visible
-     ========================================================= */
-  var reveals = document.querySelectorAll('.reveal');
-
-  if ('IntersectionObserver' in window) {
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target); // 出现过一次就不再监听
-        }
-      });
-    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-
-    reveals.forEach(function (el) { observer.observe(el); });
-  } else {
-    // 很老的浏览器直接全部显示
-    reveals.forEach(function (el) { el.classList.add('is-visible'); });
-  }
-
-  /* =========================================================
-     2. 吹蜡烛：火花 + 音效
-     ========================================================= */
   var cake = document.getElementById('cake');
   var blowBtn = document.getElementById('blowBtn');
   var wishText = document.getElementById('wishText');
@@ -155,8 +122,12 @@
       blown = true;
 
       if (cake) cake.classList.add('is-out');          // 火焰熄灭（CSS 里控制）
-      if (wishText) wishText.classList.add('is-visible');
-      blowBtn.textContent = '再吹一次 ✨';
+      if (cake) cake.setAttribute('aria-label', '蜡烛已经吹灭的生日蛋糕');
+      if (wishText) {
+        wishText.textContent = '愿望已经悄悄收好啦。';
+        wishText.classList.add('is-visible');
+      }
+      blowBtn.textContent = '再送一个心愿';
     });
   }
 
@@ -324,7 +295,11 @@
 
   /* 3-6 开始播放烟花 */
   function startFireworks() {
-    if (!fireworks || !fwCtx || fw.running) return;   // 正在放就别重复触发
+    if (!fireworks || !fwCtx) {
+      revealCakePage();
+      return;
+    }
+    if (fw.running) return;   // 正在放就别重复触发
 
     fw.running = true;
     fw.rockets = [];
@@ -332,7 +307,8 @@
     fw.nextLaunch = 140;
 
     fireworks.hidden = false;
-    document.body.style.overflow = 'hidden';          // 播放时先别让页面滚动
+    setCardLocked(true);
+    if (skipFireworks) skipFireworks.focus();
     fwResize();
 
     fw.startedAt = performance.now();
@@ -367,13 +343,60 @@
   function revealCakePage() {
     var target = document.getElementById('cake-section');
     if (!target) return;
-    target.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setCardLocked(false);
+    if (openBtn) {
+      openBtn.disabled = false;
+      openBtn.classList.remove('is-hidden');
+    }
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth', block: 'start' });
   }
 
   /* 3-9 绑定「打开贺卡」按钮等 */
   var openBtn = document.getElementById('openBtn');
 
+  var countdown = document.getElementById('countdown');
+  var countdownNum = document.getElementById('countdownNum');
+  var skipFireworks = document.getElementById('skipFireworks');
+  var counting = false;
+  var countdownTimer = 0;
+
+  function setCardLocked(locked) {
+    document.body.style.overflow = locked ? 'hidden' : '';
+    document.querySelectorAll('body > header, body > main, body > footer').forEach(function (region) {
+      region.inert = locked;
+    });
+  }
+
+  function startCountdown() {
+    if (counting || fw.running) return;
+    if (!countdown || !countdownNum) {
+      startFireworks();
+      return;
+    }
+    counting = true;
+    openBtn.disabled = true;
+    openBtn.classList.add('is-hidden');
+    setCardLocked(true);
+    countdown.hidden = false;
+    var remaining = 3;
+
+    function showStep() {
+      if (remaining === 0) {
+        countdown.hidden = true;
+        counting = false;
+        startFireworks();
+        return;
+      }
+      countdownNum.textContent = String(remaining);
+      countdownNum.classList.remove('is-pop');
+      void countdownNum.offsetWidth;
+      countdownNum.classList.add('is-pop');
+      remaining -= 1;
+      countdownTimer = window.setTimeout(showStep, 1000);
+    }
+    showStep();
+  }
   if (openBtn) {
     openBtn.addEventListener('click', function () {
       // 关了动态效果、或者浏览器不支持画布：直接平滑滑到蛋糕页面
@@ -381,7 +404,7 @@
         revealCakePage();
         return;
       }
-      startFireworks();
+      startCountdown();
     });
   }
 
@@ -399,92 +422,19 @@
     if (fw.running) fwResize();
   });
 
-  /* =========================================================
-     新增（倒计时模块用）：把烟花接口导出，倒计时结束后直接调用
-     —— 上面原有代码一行都没有改动，这里只是新增一个对外出口
-     ========================================================= */
-  // 给烟花配色补上几支高饱和色，让烟花变成「五彩」；原有暖色配色原样保留
-  FW_COLORS.push('#FF5C7A', '#FFD166', '#5CE1E6', '#7AE582', '#B48CFF', '#FF8FD0');
-
-  window.__birthdayCard = {
-    startFireworks: startFireworks,   // 开始播放全屏烟花（播完会自动滑到蛋糕页）
-    finishFireworks: fwFinish         // 提前收场（备用）
-  };
-})();
-
-
-/* =========================================================
-   新增 · 倒计时模块：3 → 2 → 1，结束立刻放五彩烟花
-   点「打开贺卡」后的顺序：按钮隐藏 → 倒计时 → 烟花 → 滑到蛋糕页
-   （本段全部是新增代码，没有删除也没有改动上面任何原有逻辑）
-   ========================================================= */
-(function () {
-  'use strict';
-
-  var openBtn = document.getElementById('openBtn');
-  var countdown = document.getElementById('countdown');
-  var countdownNum = document.getElementById('countdownNum');
-  var card = window.__birthdayCard;
-
-  // 少了任何一块都别乱来，直接交回原来的按钮逻辑
-  if (!openBtn || !countdown || !countdownNum || !card) return;
-
-  // 系统开了「减少动态效果」时不做倒计时，交回原本的按钮逻辑（原本会直接滑到蛋糕页）
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  var STEP_MS = 1000;     // 每个数字停留 1 秒
-  var STEPS = ['3', '2', '1'];
-  var counting = false;   // 正在倒计时，防重复触发
-
-  /* 逐个显示数字：每次换数字都重放一次「缩放 + 淡入淡出」动画 */
-  function startCountdown() {
-    counting = true;
-
-    openBtn.classList.add('is-hidden');   // ① 按钮隐藏
-
-    countdown.hidden = false;             // ② 显示倒计时图层（背景还是原来的页面背景）
-    countdownNum.textContent = '';
-
-    var index = 0;
-
-    function showStep() {
-      if (index >= STEPS.length) {
-        finishCountdown();
-        return;
-      }
-
-      countdownNum.textContent = STEPS[index];
-      index += 1;
-
-      // 去掉再重排，保证同一个动画在下一个数字上重新播放
-      countdownNum.classList.remove('is-pop');
-      void countdownNum.offsetWidth;
-      countdownNum.classList.add('is-pop');
-
-      window.setTimeout(showStep, STEP_MS);
-    }
-
-    function finishCountdown() {
-      countdownNum.classList.remove('is-pop');
-      countdownNum.textContent = '';
-      countdown.hidden = true;            // 收起倒计时
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && counting) {
+      window.clearTimeout(countdownTimer);
       counting = false;
-
-      card.startFireworks();              // ③ 数字结束，立刻放五彩烟花
+      countdown.hidden = true;
+      revealCakePage();
+    } else if (event.key === 'Escape' && fw.running) {
+      fwFinish();
+    } else if (event.key === 'Tab' && fw.running) {
+      event.preventDefault();
+      if (skipFireworks) skipFireworks.focus();
     }
+  });
 
-    showStep();
-  }
-
-  /* 在「捕获阶段」拦下这一下点击：
-     先隐藏按钮、改播倒计时，倒计时结束后我们自己调烟花。
-     原有按钮上的监听没有被删掉，只是这一下不让它先跑。 */
-  document.addEventListener('click', function (event) {
-    if (event.target !== openBtn) return;
-
-    event.stopPropagation();              // 挡住原有监听，避免烟花抢在倒计时前面
-    if (counting) return;                 // 倒计时中重复点，忽略
-
-    startCountdown();
-  }, true);
+  FW_COLORS.push('#FF5C7A', '#FFD166', '#5CE1E6', '#7AE582', '#B48CFF', '#FF8FD0');
 })();
